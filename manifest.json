@@ -1,6 +1,6 @@
 {
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "MyNotepad",
+  "description": "My own notepad. Since all the others feel bad.",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
