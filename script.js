@@ -1,7 +1,7 @@
 var savedText = [["Demo", "Saved text will appear here"],["test","2"]];
 // button attachements
 document.getElementById("popout").addEventListener("click", PopOut);
-document.getElementById("minimise").addEventListener("click", Minimise);
+document.getElementById("reveal").addEventListener("click", Minimise);
 document.getElementById("clearHead").addEventListener("click", ClearHead);
 document.getElementById("add").addEventListener("click", AddText);
 document.getElementById("clearText").addEventListener("click", ClearText);
@@ -10,13 +10,7 @@ document.getElementById("copyNew").addEventListener("click", CopyText);
 // new text field
 const head = document.getElementById("newHeading");
 const text = document.getElementById("newText");
-
-
-document.getElementById("savedText").textContent = savedText
-
-var listItems = savedText.map(item => `<li>${item}</li>`).join('');
-  // Inject the list items into the <ul> element
-document.getElementById('list-output').innerHTML = listItems;
+const newtextfield = document.getElementById("new");
 
 
 // functions
@@ -27,7 +21,14 @@ function PopOut() {
 
 // minise new text tab
 function Minimise() {
-
+    if (newtextfield.hidden == true) {
+        newtextfield.hidden = false;
+        document.getElementById("reveal").textContent = "Hide"
+    }
+    else if (newtextfield.hidden == false) {
+        newtextfield.hidden = true;
+        document.getElementById("reveal").textContent = "Show"
+    }
 }
 
 // clears heading

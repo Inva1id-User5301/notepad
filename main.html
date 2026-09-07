@@ -7,12 +7,13 @@
 </head>
 
 <body>
-    <button id="popout">PopOut</button> <button id="minimise">Minimise New</button>
-    <textarea id="newHeading" name="newHeading" rows="1" cols="33" placeholder="Enter new heading"></textarea> <button id="clearHead">Clear</button>
-    <textarea id="newText" name="newText" rows="5" cols="40" placeholder="Enter new text"></textarea>
-    <button id="add">Add</button> <button id="clearText">Clear</button> <button id="copyNew">Copy</button>
-    
-    <h3>Saved</h3>
+    <button id="popout">PopOut</button> <button id="reveal">Hide</button>
+    <div id="new">
+        <textarea id="newHeading" name="newHeading" rows="1" cols="33" placeholder="Enter new heading"></textarea> <button id="clearHead">Clear</button>
+        <textarea id="newText" name="newText" rows="5" cols="40" placeholder="Enter new text"></textarea>
+        <button id="add">Add</button> <button id="clearText">Clear</button> <button id="copyNew">Copy</button>
+    </div>
+    <h3 width="100px">Saved</h3>
     <ul id="savedText"></ul>
 
     <script src="script.js"></script>
