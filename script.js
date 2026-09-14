@@ -1,7 +1,7 @@
 var savedText = [["Demo", "Saved text will appear here"],["Demo2", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"]];
 
 
-// #region button attachements
+// #region BUTTON ATTACHMENTS
 document.getElementById("popout").addEventListener("click", PopOut);
 document.getElementById("reveal").addEventListener("click", Minimise);
 document.getElementById("clearHead").addEventListener("click", ClearHead);
@@ -10,6 +10,7 @@ document.getElementById("clearText").addEventListener("click", ClearText);
 document.getElementById("copyNew").addEventListener("click", CopyText);
 // #endregion
 
+// #region CONSTANTS
 // new text field
 const newtextfield = document.getElementById("new"); // div
 const head = document.getElementById("newHeading"); // heading textbox
@@ -17,11 +18,14 @@ const text = document.getElementById("newText"); // text textbox
 
 // saved text div
 const savedtextfield = document.getElementById("savedText");
+// #endregion
 
+// #region DISPLAY SAVED TEXT
 for (let i = 0; i < Object.keys(chrome.storage.local).length;i++) {
     id = "Note" + i
     console.log(chrome.storage.local.get([id]));
 }
+// #endregion
 
 // #region *************** GENERAL FUNCTIONS**************
 /** popout tab into new window */
@@ -65,7 +69,6 @@ function ClearText() {
 
 /** Copies active text to clipboard */
 function CopyText() {
-    var text = document.getElementById("newText");
     text.select();
     navigator.clipboard.writeText(text.value);
 }
@@ -76,11 +79,14 @@ function CopyText() {
 /** Saves text to list */
 function AddText() {
     if (text != "") {
+        if (head == "") {
+            head.value = "Note " + savedText.length;
+        }
         newtext = [head.value, text.value];
         savedText.push(newtext);
         ClearHead();
         ClearText();
-        Display();
+        AddNew(heading = head, content = text);
     }
 }
 
@@ -100,6 +106,7 @@ function Display(i = savedText.length-1) {
     var divid   = "saved" + i;
     var headid  = "head" + i;
     var textid  = "text" + i;
+    var showid  = "show" + i;
 
     // heading
     newsavedhead.id = headid;
@@ -117,6 +124,8 @@ function Display(i = savedText.length-1) {
     newsaveddel.textContent = "Del";
     newsavedsave.textContent = "Save";
 
+    newsavedshow.id = showid;
+
     // add elements
     newsaveddiv.appendChild(newsavedhead);
     newsavedhead.appendChild(newsavedshow);
@@ -131,16 +140,15 @@ function Display(i = savedText.length-1) {
     savedtextfield.appendChild(newsaveddiv);
 
     // functionality for buttons
-    newsavedshow.addEventListener("click", Reveal(i));
-    newsavedcopy.addEventListener("click", Copy(i));
-    newsavededit.addEventListener("click", Edit(i));
-    newsaveddel.addEventListener("click", Delete(i));
-
-    newsavedsave.addEventListener("click", Save(i));
+    newsavedshow.addEventListener("click", () => { Reveal(i) });
+    newsavedcopy.addEventListener("click", () => { Copy(i) });
+    newsavededit.addEventListener("click", () => { Edit(i) });
+    newsaveddel.addEventListener("click",  () => { Delete(i) });
+    newsavedsave.addEventListener("click", () => { Save(i) });
 }
 
 /** Save to cache */
-async function addnew(number = savedText.length-1, heading="Demo", content="Saved text will appear here") {
+async function AddNew( heading="Demo", content="Saved text will appear here", number = savedText.length-1) {
     var id = "Note"+number;
     await chrome.storage.local.set({[id]: [heading, content]});
     Display(number);
@@ -152,14 +160,19 @@ async function addnew(number = savedText.length-1, heading="Demo", content="Save
 /** Shows or hides the text content of the note */
 function Reveal(i) {
     id = "text"+i;
+    button = "show"+i;
     t = document.getElementById(id);
+    b = document.getElementById(button)
+    console.log(t);
     if (t.hidden == true) {
         t.hidden = false;
-        t.textContent = "-";
+        b.textContent = "-";
+        console.log('hidden true');
     }
     else if (t.hidden == false) {
         t.hidden = true;
-        t.textContent = "+";
+        this.b.textContent = "+";
+        console.log('hidden false');
     }
 }
 
