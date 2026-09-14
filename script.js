@@ -1,11 +1,14 @@
-var savedText = [["Demo", "Saved text will appear here"]["Demo2", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"]];
-// button attachements
+var savedText = [["Demo", "Saved text will appear here"],["Demo2", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"]];
+
+
+// #region button attachements
 document.getElementById("popout").addEventListener("click", PopOut);
 document.getElementById("reveal").addEventListener("click", Minimise);
 document.getElementById("clearHead").addEventListener("click", ClearHead);
 document.getElementById("add").addEventListener("click", AddText);
 document.getElementById("clearText").addEventListener("click", ClearText);
 document.getElementById("copyNew").addEventListener("click", CopyText);
+// #endregion
 
 // new text field
 const newtextfield = document.getElementById("new"); // div
@@ -15,19 +18,18 @@ const text = document.getElementById("newText"); // text textbox
 // saved text div
 const savedtextfield = document.getElementById("savedText");
 
-// add exisitng vars
-for (let i = 0; i < savedText.length; i++) {
-    Save(i);
+for (let i = 0; i < Object.keys(chrome.storage.local).length;i++) {
+    id = "Note" + i
+    console.log(chrome.storage.local.get([id]));
 }
 
-
-/***************FUNCTIONS**************/
+// #region *************** GENERAL FUNCTIONS**************
 /** popout tab into new window */
 function PopOut() {
     window.close();
     const newWindow = window.open("main.html",
         "Notepad",
-        "width=350px,height=600,resizeable=yes,scrollbar=yes"
+        "width=350,height=400,resizeable=yes,scrollbar=yes"
     );
     // require('./popout.js'); // runs popout.js
     // hidepopoutbutton();
@@ -35,9 +37,10 @@ function PopOut() {
         this.document.getElementById("popout").textContent = "Close"
     };
 }
+// #endregion
 
 
-/***************NEW TEXT FUNCTIONS**************/
+// #region ***************NEW TEXT FUNCTIONS**************
 /** Minise new note tab */
 function Minimise() {
     if (newtextfield.hidden == true) {
@@ -55,17 +58,6 @@ function ClearHead() {
     head.value = "";
 }
 
-/** Saves text to list */
-function AddText() {
-    if (text != "") {
-        newtext = [head.value, text.value];
-        savedText.push(newtext);
-        ClearHead();
-        ClearText();
-        Save();
-    }
-}
-
 /** Clears active text */
 function ClearText() {
     text.value = "";
@@ -77,16 +69,31 @@ function CopyText() {
     text.select();
     navigator.clipboard.writeText(text.value);
 }
+// #endregion
+
+
+// #region ***************ADD TEXT FUNCTIONS**************
+/** Saves text to list */
+function AddText() {
+    if (text != "") {
+        newtext = [head.value, text.value];
+        savedText.push(newtext);
+        ClearHead();
+        ClearText();
+        Display();
+    }
+}
 
 /** Save and show new text under the 'Saved' list */
-function Save(i = savedText.length-1) {
+function Display(i = savedText.length-1) {
     // create elements
     const newsaveddiv  = document.createElement(`div`);
     const newsavedhead = document.createElement(`h4`);
     const newsavedshow = document.createElement(`button`);
     const newsavedcopy = document.createElement(`button`);
-    const newsaveddel  = document.createElement(`button`);
     const newsavededit = document.createElement(`button`);
+    const newsaveddel  = document.createElement(`button`);
+    const newsavedsave  = document.createElement(`button`);
     const newsavedtext = document.createElement(`p`);
 
     // get ids
@@ -106,15 +113,17 @@ function Save(i = savedText.length-1) {
     // buttons
     newsavedshow.textContent = "+";
     newsavedcopy.textContent = "Copy";
-    newsaveddel.textContent = "Del";
     newsavededit.textContent = "Edit";
+    newsaveddel.textContent = "Del";
+    newsavedsave.textContent = "Save";
 
     // add elements
     newsaveddiv.appendChild(newsavedhead);
     newsavedhead.appendChild(newsavedshow);
     newsavedhead.appendChild(newsavedcopy);
-    newsavedhead.appendChild(newsaveddel);
     newsavedhead.appendChild(newsavededit);
+    newsavedhead.appendChild(newsaveddel);
+    newsavedhead.appendChild(newsavedsave);
     newsaveddiv.appendChild(newsavedtext);
 
     // add to doc
@@ -124,12 +133,22 @@ function Save(i = savedText.length-1) {
     // functionality for buttons
     newsavedshow.addEventListener("click", Reveal(i));
     newsavedcopy.addEventListener("click", Copy(i));
-    newsaveddel.addEventListener("click", Delete(i));
     newsavededit.addEventListener("click", Edit(i));
+    newsaveddel.addEventListener("click", Delete(i));
+
+    newsavedsave.addEventListener("click", Save(i));
 }
 
+/** Save to cache */
+async function addnew(number = savedText.length-1, heading="Demo", content="Saved text will appear here") {
+    var id = "Note"+number;
+    await chrome.storage.local.set({[id]: [heading, content]});
+    Display(number);
+}
+// #endregion
 
-/***************SAVED TEXT FUNCTIONS***************/
+
+// #region ***************SAVED TEXT FUNCTIONS***************
 /** Shows or hides the text content of the note */
 function Reveal(i) {
     id = "text"+i;
@@ -149,12 +168,18 @@ function Copy(i) {
 
 }
 
+/** Edits note */
+function Edit(i) {
+
+}
+
 /** Deletes note */
 function Delete(i) {
 
 }
 
-/** Edits note */
-function Edit(i) {
+/** Saves note to txt file on device */
+function Save(i) {
 
 }
+// #endregion
