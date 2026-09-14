@@ -178,6 +178,11 @@ function Reveal(i) {
 
 /** Copies text content to clipboard */
 function Copy(i) {
+    id = "text" + i;
+    t = document.getElementById(id);
+    console.log(t);
+    ct = t.textContent;
+    navigator.clipboard.writeText(ct);
 
 }
 
@@ -188,7 +193,7 @@ function Edit(i) {
 
 /** Deletes note */
 function Delete(i) {
-
+    
 }
 
 /** Saves note to txt file on device */
