@@ -20,13 +20,10 @@ const savedtextfield = document.getElementById("savedText");
 // #region DISPLAY SAVED TEXT
 
 // variables
-let h; // array of headers
-let t; // array of text content
+var h = []; // array of headers
+var t = []; // array of text content
 
 getCache();
-
-
-
 // #endregion
 
 // #region *************** GENERAL FUNCTIONS**************
@@ -79,11 +76,7 @@ function CopyText() {
 
 // #region ***************ADD TEXT FUNCTIONS**************
 /** Saves text to list */
-function AddText(dummy = 'fuk u', headings = head.value, contents = text.value) {
-    console.log(headings, head.value)
-    console.log(contents, text.value)
-    console.log(headings == head.value)
-    console.log(contents == text.value)
+function AddText(dummy = 'fuk u', headings = head.value, contents = text.value, id = h.length) {
     if (text != "") {
         if (headings == "") {
             headings = "Note " + h.length;
@@ -92,13 +85,13 @@ function AddText(dummy = 'fuk u', headings = head.value, contents = text.value) 
         t.push(contents);
         ClearHead();
         ClearText();
-        console.log(h,t)
-        Display()    
+        Display(id);
+        saveToCache();
     }
 }
 
 /** Save and show new text under the 'Saved' list */
-function Display(i = h.length-1) {
+function Display(i = h.length) {
     // create elements
     const newsaveddiv  = document.createElement(`div`);
     const newsavedhead = document.createElement(`h4`);
@@ -164,16 +157,13 @@ function Reveal(i) {
     button = "show"+i;
     content = document.getElementById(id);
     b = document.getElementById(button)
-    console.log(content);
     if (content.hidden == true) {
         content.hidden = false;
         b.textContent = "-";
-        console.log('hidden true');
     }
     else if (content.hidden == false) {
         content.hidden = true;
         this.b.textContent = "+";
-        console.log('hidden false');
     }
 }
 
@@ -181,7 +171,6 @@ function Reveal(i) {
 function Copy(i) {
     id = "text" + i;
     content = document.getElementById(id);
-    console.log(content);
     ct = content.textContent;
     navigator.clipboard.writeText(ct);
 
@@ -216,15 +205,16 @@ async function getCache() {
     const keys = await chrome.storage.local.getKeys();
     for (let i = 0;i < keys.length;i++) {
         key = keys[i]
-        if (key == "header") { headerExist = true; }
+        if (key == "headers") { headerExist = true; }
         else if (key == "text") { contentExist = true; }
         if (headerExist && contentExist) { break; }
     }
 
     if (headerExist && contentExist) {
+        
+        heads = await chrome.storage.local.get(["headers"]);
+        texts = await chrome.storage.local.get(["text"]);
         if (heads.length != texts.length) {
-            heads = await chrome.storage.local.get(["headers"]);
-            texts = await chrome.storage.local.get(["text"]);
             await chrome.storage.local.set({ headers: ["Demo", "Demo2"] });
             await chrome.storage.local.set({ text: ["Saved text will appear here", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"] });
             heads = await chrome.storage.local.get(["headers"]);
@@ -239,24 +229,19 @@ async function getCache() {
     }
     
 
-    h = heads.headers;
-    t = texts.text;
+    var H = heads.headers;
+    var T = texts.text;
 
-    console.log(t)
-    console.log("length: ",t.length);
-    
-    console.log(h)
-    console.log("length: ",h.length);
-
-    l = t.length
+    l = T.length
 
     for(var i = 0; i<l;i++) {
-        console.log(i);
-        console.log(h[i]);
-        console.log(t[i]);
-        AddText(null, h[i], t[i]);
+        AddText(null, H[i], T[i], i);
     }
+}
 
+async function saveToCache() {
+    await chrome.storage.local.set({ headers: h });
+    await chrome.storage.local.set({ text: t });
 }
 
 // #endregion
