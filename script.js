@@ -223,10 +223,8 @@ function Save(i) {
 // #region ***************CACHE FUNCTIONS***************
 /** get cache */
 async function getCache() {
-
-    var heads
-    var texts
-
+    let heads;
+    let texts;
     var headerExist = false;
     var contentExist = false;
 
@@ -253,21 +251,10 @@ async function getCache() {
         await chrome.storage.local.set({ text: ["Saved text will appear here", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"] });
         heads = await chrome.storage.local.get(["headers"]);
         texts = await chrome.storage.local.get(["text"]);
-    }
-
-    console.log('end')
-    
-
-    if (1 == 0) {
-        await chrome.storage.local.set({ headers: ["Demo", "Demo2"] });
-        await chrome.storage.local.set({ text: ["Saved text will appear here", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"] });
-    }    
+    } 
 
     h = heads.headers;
     t = texts.text;
-
-    console.log(h)
-    console.log(t)
 }
 
 // #endregion
