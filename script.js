@@ -95,20 +95,30 @@ function AddText(dummy = 'fuk u', headings = head.value, contents = text.value, 
 /** Save and show new text under the 'Saved' list */
 function Display(i = len) {
     // create elements
-    const newsaveddiv  = document.createElement(`div`);
-    const newsavedhead = document.createElement(`h4`);
-    const newsavedshow = document.createElement(`button`);
-    const newsavedcopy = document.createElement(`button`);
-    const newsavededit = document.createElement(`button`);
-    const newsaveddel  = document.createElement(`button`);
-    const newsavedsave = document.createElement(`button`);
-    const newsavedtext = document.createElement(`p`);
+    const newsaveddiv    = document.createElement(`div`);
+    const newsavedhead   = document.createElement(`h4`);
+    const newsavedshow   = document.createElement(`button`);
+    const newsavedcopy   = document.createElement(`button`);
+    const newsavededit   = document.createElement(`button`);
+    const newsaveddel    = document.createElement(`button`);
+    const newsavedsave   = document.createElement(`button`);
+    const newsavedchange = document.createElement(`button`);
+    const newsavedcancel = document.createElement(`button`);
+    const newsavedtext   = document.createElement(`p`);
 
     // get ids
     var divid   = "saved" + i;
     var headid  = "head" + i;
     var textid  = "text" + i;
-    var showid  = "show" + i;
+
+    var showid   = "show" + i;
+    var copyid   = "copy" + i;
+    var editid   = "edit" + i;
+    var delid    = "del"  + i;
+    var saveid   = "save" + i;
+    var changeid = "change" + i;
+    var cancelid = "cancel" + i;
+
 
     var j = i
     if (i >= h.length) {j=h.length-1}
@@ -123,13 +133,24 @@ function Display(i = len) {
     newsavedtext.hidden = true;
 
     // buttons
-    newsavedshow.textContent = "+";
-    newsavedcopy.textContent = "Copy";
-    newsavededit.textContent = "Edit";
-    newsaveddel.textContent = "Del";
-    newsavedsave.textContent = "Save";
+    newsavedshow.textContent   = "+";
+    newsavedcopy.textContent   = "Copy";
+    newsavededit.textContent   = "Edit";
+    newsaveddel.textContent    = "Del";
+    newsavedsave.textContent   = "Save";
+    newsavedchange.textContent = "Save Changes";
+    newsavedcancel.textContent = "Discard Changes";
 
-    newsavedshow.id = showid;
+    newsavedshow.id   = showid;
+    newsavedcopy.id   = copyid;
+    newsavededit.id   = editid;
+    newsaveddel.id    = delid;
+    newsavedsave.id   = saveid;
+    newsavedchange.id = changeid;
+    newsavedcancel.id = cancelid
+
+    newsavedchange.hidden = true;
+    newsavedcancel.hidden = true;
 
     // add elements
     newsaveddiv.appendChild(newsavedhead);
@@ -138,7 +159,10 @@ function Display(i = len) {
     newsavedhead.appendChild(newsavededit);
     newsavedhead.appendChild(newsaveddel);
     newsavedhead.appendChild(newsavedsave);
+    newsavedhead.appendChild(newsavedchange);
+    newsavedhead.appendChild(newsavedcancel);
     newsaveddiv.appendChild(newsavedtext);
+
 
     // add to doc
     newsaveddiv.id  = divid;
@@ -150,6 +174,8 @@ function Display(i = len) {
     newsavededit.addEventListener("click", () => { Edit(i) });
     newsaveddel.addEventListener("click",  () => { Delete(i) });
     newsavedsave.addEventListener("click", () => { Save(i) });
+    newsavedchange.addEventListener("click", () => { SaveEdit(i) });
+    newsavedcancel.addEventListener("click", () => { CancelEdit(i) });
 }
 
 // #endregion
@@ -183,7 +209,102 @@ function Copy(i) {
 
 /** Edits note */
 function Edit(i) {
+    var id  = "text" + i;
+    var Sid = "show" + i;
+    var Cid = "copy" + i;
+    var Eid = "edit" + i;
+    var Did = "del" + i;
+    var Said = "save" + i;
+    var Changeid = "change" + i;
+    var CancelId = "cancel" + i;
+    var boxid = "box" + i;
 
+    document.getElementById(Sid).hidden = true;
+    document.getElementById(Cid).hidden = true;
+    document.getElementById(Eid).hidden = true;
+    document.getElementById(Did).hidden = true;
+    document.getElementById(Said).hidden = true;
+    document.getElementById(Changeid).hidden = false;
+    document.getElementById(CancelId).hidden = false;
+
+    var content = document.getElementById(id);
+    var val = content.innerHTML;
+    content.innerHTML = ""
+    
+    const editBox = document.createElement('textarea');
+    editBox.id = boxid;
+    editBox.value = val;
+    editBox.defaultValue = val;
+    editBox.cols = 40;
+
+    content.appendChild(editBox);
+    content.hidden = false;
+
+}
+
+/** Saves edits of notes */
+function SaveEdit(i) {
+    var id  = "text" + i;
+    var Sid = "show" + i;
+    var Cid = "copy" + i;
+    var Eid = "edit" + i;
+    var Did = "del" + i;
+    var Said = "save" + i;
+    var Changeid = "change" + i;
+    var CancelId = "cancel" + i;
+    var boxid = "box" + i;
+
+    document.getElementById(Sid).hidden = false;
+    document.getElementById(Cid).hidden = false;
+    document.getElementById(Eid).hidden = false;
+    document.getElementById(Did).hidden = false;
+    document.getElementById(Said).hidden = false;
+    document.getElementById(Changeid).hidden = true;
+    document.getElementById(CancelId).hidden = true;
+
+    var editBox = document.getElementById(boxid);
+    var content = document.getElementById(id);
+    content.innerHTML = editBox.value;
+    editBox.remove();
+
+    // update in cache
+    var item = 0
+    var Divid = "saved" + i;
+    x = savedtextfield.getElementsByTagName('div')
+    for (i in x) {
+        if (Divid == x[i].id) {
+            t[item] = content.innerHTML;
+            saveToCache();
+            break;
+        }
+        item++;
+    }
+}
+
+/** Discard changes made during edits */
+function CancelEdit(i) {
+    var id  = "text" + i;
+    var Sid = "show" + i;
+    var Cid = "copy" + i;
+    var Eid = "edit" + i;
+    var Did = "del" + i;
+    var Said = "save" + i;
+    var Changeid = "change" + i;
+    var CancelId = "cancel" + i;
+    var boxid = "box" + i;
+
+    document.getElementById(Sid).hidden = false;
+    document.getElementById(Cid).hidden = false;
+    document.getElementById(Eid).hidden = false;
+    document.getElementById(Did).hidden = false;
+    document.getElementById(Said).hidden = false;
+    document.getElementById(Changeid).hidden = true;
+    document.getElementById(CancelId).hidden = true;
+
+    var editBox = document.getElementById(boxid);
+    var content = document.getElementById(id);
+    content.innerHTML = editBox.defaultValue;
+    editBox.remove();
 }
 
 /** Deletes note */
