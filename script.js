@@ -326,7 +326,22 @@ function Delete(i) {
 
 /** Saves note to txt file on device */
 function Save(i) {
+    var Hid = "head" + i;
+    var Tid = "text" + i;
 
+    var heading = document.getElementById(Hid).textContent;
+    const headin = heading.replace("CopyEditDelSaveSave ChangesDiscard Changes", "");
+    const headi = headin.slice(0,-1);
+    console.log(headi);
+    var content = document.getElementById(Tid).textContent;
+
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', headi);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
 }
 // #endregion
 
