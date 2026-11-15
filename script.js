@@ -22,6 +22,7 @@ const savedtextfield = document.getElementById("savedText");
 // variables
 var h = []; // array of headers
 var t = []; // array of text content
+var len = 0;
 
 getCache();
 // #endregion
@@ -76,22 +77,23 @@ function CopyText() {
 
 // #region ***************ADD TEXT FUNCTIONS**************
 /** Saves text to list */
-function AddText(dummy = 'fuk u', headings = head.value, contents = text.value, id = h.length) {
-    if (text != "") {
-        if (headings == "") {
-            headings = "Note " + h.length;
-        }
-        h.push(headings);
-        t.push(contents);
-        ClearHead();
-        ClearText();
-        Display(id);
-        saveToCache();
+function AddText(dummy = 'fuk u', headings = head.value, contents = text.value, id = len) {
+    console.log(headings)
+    if (headings == "") {
+        headings = "Note " + len;
     }
+    h.push(headings);
+    t.push(contents);
+    len++;
+    Display(id);
+    saveToCache();
+    ClearHead();
+    ClearText();
+    console.log(h)
 }
 
 /** Save and show new text under the 'Saved' list */
-function Display(i = h.length) {
+function Display(i = len) {
     // create elements
     const newsaveddiv  = document.createElement(`div`);
     const newsavedhead = document.createElement(`h4`);
@@ -99,7 +101,7 @@ function Display(i = h.length) {
     const newsavedcopy = document.createElement(`button`);
     const newsavededit = document.createElement(`button`);
     const newsaveddel  = document.createElement(`button`);
-    const newsavedsave  = document.createElement(`button`);
+    const newsavedsave = document.createElement(`button`);
     const newsavedtext = document.createElement(`p`);
 
     // get ids
@@ -108,13 +110,16 @@ function Display(i = h.length) {
     var textid  = "text" + i;
     var showid  = "show" + i;
 
+    var j = i
+    if (i >= h.length) {j=h.length-1}
+    
     // heading
     newsavedhead.id = headid;
-    newsavedhead.textContent = h[i];
+    newsavedhead.textContent = h[j];
 
     // text
     newsavedtext.id = textid;
-    newsavedtext.textContent = t[i];
+    newsavedtext.textContent = t[j];
     newsavedtext.hidden = true;
 
     // buttons
@@ -153,10 +158,10 @@ function Display(i = h.length) {
 // #region ***************SAVED TEXT FUNCTIONS***************
 /** Shows or hides the text content of the note */
 function Reveal(i) {
-    id = "text"+i;
-    button = "show"+i;
-    content = document.getElementById(id);
-    b = document.getElementById(button)
+    var id = "text"+i;
+    var button = "show"+i;
+    var content = document.getElementById(id);
+    var b = document.getElementById(button)
     if (content.hidden == true) {
         content.hidden = false;
         b.textContent = "-";
@@ -169,9 +174,9 @@ function Reveal(i) {
 
 /** Copies text content to clipboard */
 function Copy(i) {
-    id = "text" + i;
-    content = document.getElementById(id);
-    ct = content.textContent;
+    var id = "text" + i;
+    var content = document.getElementById(id);
+    var ct = content.textContent;
     navigator.clipboard.writeText(ct);
 
 }
@@ -183,7 +188,19 @@ function Edit(i) {
 
 /** Deletes note */
 function Delete(i) {
-    
+    var item = 0
+    var id = "saved" + i;
+    x = savedtextfield.getElementsByTagName('div')
+    for (i in x) {
+        if (id == x[i].id) {
+            h.splice(item, 1)
+            t.splice(item, 1)
+            document.getElementById(id).remove();
+            saveToCache();
+            break;
+        }
+        item++;
+    }
 }
 
 /** Saves note to txt file on device */
@@ -231,9 +248,8 @@ async function getCache() {
 
     var H = heads.headers;
     var T = texts.text;
-
-    l = T.length
-
+    var l = T.length;
+    len = T.length;
     for(var i = 0; i<l;i++) {
         AddText(null, H[i], T[i], i);
     }
