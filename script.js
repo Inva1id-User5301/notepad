@@ -1,7 +1,3 @@
-// saved 
-let h;
-let t;
-
 // #region BUTTON ATTACHMENTS
 document.getElementById("popout").addEventListener("click", PopOut);
 document.getElementById("reveal").addEventListener("click", Minimise);
@@ -23,21 +19,11 @@ const savedtextfield = document.getElementById("savedText");
 
 // #region DISPLAY SAVED TEXT
 
-console.log('y')
+// variables
+let h; // array of headers
+let t; // array of text content
 
 getCache();
-
-console.log('x')
-console.log(h)
-console.log(t)
-console.log('x')
-
-/*
-for (let i = 0; i < Object.keys(chrome.storage.local).length;i++) {
-    id = "Note" + i
-    console.log(chrome.storage.local.get([id]));
-}
-*/
 
 
 
@@ -93,21 +79,26 @@ function CopyText() {
 
 // #region ***************ADD TEXT FUNCTIONS**************
 /** Saves text to list */
-function AddText() {
+function AddText(dummy = 'fuk u', headings = head.value, contents = text.value) {
+    console.log(headings, head.value)
+    console.log(contents, text.value)
+    console.log(headings == head.value)
+    console.log(contents == text.value)
     if (text != "") {
-        if (head == "") {
-            head.value = "Note " + savedText.length;
+        if (headings == "") {
+            headings = "Note " + h.length;
         }
-        newtext = [head.value, text.value];
-        savedText.push(newtext);
+        h.push(headings);
+        t.push(contents);
         ClearHead();
         ClearText();
-        AddNew(heading = head, content = text);
+        console.log(h,t)
+        Display()    
     }
 }
 
 /** Save and show new text under the 'Saved' list */
-function Display(i = savedText.length-1) {
+function Display(i = h.length-1) {
     // create elements
     const newsaveddiv  = document.createElement(`div`);
     const newsavedhead = document.createElement(`h4`);
@@ -126,11 +117,11 @@ function Display(i = savedText.length-1) {
 
     // heading
     newsavedhead.id = headid;
-    newsavedhead.textContent = savedText[i][0];
+    newsavedhead.textContent = h[i];
 
     // text
     newsavedtext.id = textid;
-    newsavedtext.textContent = savedText[i][1];
+    newsavedtext.textContent = t[i];
     newsavedtext.hidden = true;
 
     // buttons
@@ -163,12 +154,6 @@ function Display(i = savedText.length-1) {
     newsavedsave.addEventListener("click", () => { Save(i) });
 }
 
-/** Save to cache */
-async function AddNew( heading="Demo", content="Saved text will appear here", number = savedText.length-1) {
-    var id = "Note"+number;
-    await chrome.storage.local.set({[id]: [heading, content]});
-    Display(number);
-}
 // #endregion
 
 
@@ -177,16 +162,16 @@ async function AddNew( heading="Demo", content="Saved text will appear here", nu
 function Reveal(i) {
     id = "text"+i;
     button = "show"+i;
-    t = document.getElementById(id);
+    content = document.getElementById(id);
     b = document.getElementById(button)
-    console.log(t);
-    if (t.hidden == true) {
-        t.hidden = false;
+    console.log(content);
+    if (content.hidden == true) {
+        content.hidden = false;
         b.textContent = "-";
         console.log('hidden true');
     }
-    else if (t.hidden == false) {
-        t.hidden = true;
+    else if (content.hidden == false) {
+        content.hidden = true;
         this.b.textContent = "+";
         console.log('hidden false');
     }
@@ -195,9 +180,9 @@ function Reveal(i) {
 /** Copies text content to clipboard */
 function Copy(i) {
     id = "text" + i;
-    t = document.getElementById(id);
-    console.log(t);
-    ct = t.textContent;
+    content = document.getElementById(id);
+    console.log(content);
+    ct = content.textContent;
     navigator.clipboard.writeText(ct);
 
 }
@@ -251,10 +236,27 @@ async function getCache() {
         await chrome.storage.local.set({ text: ["Saved text will appear here", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"] });
         heads = await chrome.storage.local.get(["headers"]);
         texts = await chrome.storage.local.get(["text"]);
-    } 
+    }
+    
 
     h = heads.headers;
     t = texts.text;
+
+    console.log(t)
+    console.log("length: ",t.length);
+    
+    console.log(h)
+    console.log("length: ",h.length);
+
+    l = t.length
+
+    for(var i = 0; i<l;i++) {
+        console.log(i);
+        console.log(h[i]);
+        console.log(t[i]);
+        AddText(null, h[i], t[i]);
+    }
+
 }
 
 // #endregion
