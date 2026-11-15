@@ -1,5 +1,6 @@
-var savedText = [["Demo", "Saved text will appear here"],["Demo2", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"]];
-
+// saved 
+let h;
+let t;
 
 // #region BUTTON ATTACHMENTS
 document.getElementById("popout").addEventListener("click", PopOut);
@@ -21,10 +22,25 @@ const savedtextfield = document.getElementById("savedText");
 // #endregion
 
 // #region DISPLAY SAVED TEXT
+
+console.log('y')
+
+getCache();
+
+console.log('x')
+console.log(h)
+console.log(t)
+console.log('x')
+
+/*
 for (let i = 0; i < Object.keys(chrome.storage.local).length;i++) {
     id = "Note" + i
     console.log(chrome.storage.local.get([id]));
 }
+*/
+
+
+
 // #endregion
 
 // #region *************** GENERAL FUNCTIONS**************
@@ -201,3 +217,58 @@ function Save(i) {
 
 }
 // #endregion
+
+
+
+// #region ***************CACHE FUNCTIONS***************
+/** get cache */
+async function getCache() {
+
+    var heads
+    var texts
+
+    var headerExist = false;
+    var contentExist = false;
+
+    const keys = await chrome.storage.local.getKeys();
+    for (let i = 0;i < keys.length;i++) {
+        key = keys[i]
+        if (key == "header") { headerExist = true; }
+        else if (key == "text") { contentExist = true; }
+        if (headerExist && contentExist) { break; }
+    }
+
+    if (headerExist && contentExist) {
+        if (heads.length != texts.length) {
+            heads = await chrome.storage.local.get(["headers"]);
+            texts = await chrome.storage.local.get(["text"]);
+            await chrome.storage.local.set({ headers: ["Demo", "Demo2"] });
+            await chrome.storage.local.set({ text: ["Saved text will appear here", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"] });
+            heads = await chrome.storage.local.get(["headers"]);
+            texts = await chrome.storage.local.get(["text"]);
+        }
+    }
+    else {
+        await chrome.storage.local.set({ headers: ["Demo", "Demo2"] });
+        await chrome.storage.local.set({ text: ["Saved text will appear here", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"] });
+        heads = await chrome.storage.local.get(["headers"]);
+        texts = await chrome.storage.local.get(["text"]);
+    }
+
+    console.log('end')
+    
+
+    if (1 == 0) {
+        await chrome.storage.local.set({ headers: ["Demo", "Demo2"] });
+        await chrome.storage.local.set({ text: ["Saved text will appear here", "+ reaveals the text\nCopy copies the text to your clipboard\nDel deletes the note from the saved list\nEdit allows you to change the contents"] });
+    }    
+
+    h = heads.headers;
+    t = texts.text;
+
+    console.log(h)
+    console.log(t)
+}
+
+// #endregion
+
