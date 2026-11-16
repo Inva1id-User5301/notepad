@@ -5,6 +5,9 @@ document.getElementById("clearHead").addEventListener("click", ClearHead);
 document.getElementById("add").addEventListener("click", AddText);
 document.getElementById("clearText").addEventListener("click", ClearText);
 document.getElementById("copyNew").addEventListener("click", CopyText);
+document.getElementById("DeleteAll").addEventListener("click", DeleteAll);
+document.getElementById("SaveAll").addEventListener("click", SaveAll);
+
 // #endregion
 
 // #region CONSTANTS
@@ -41,10 +44,34 @@ function PopOut() {
         this.document.getElementById("popout").textContent = "Close"
     };
 }
+
+/** Delete all notes */
+function DeleteAll() {
+    h=[];
+    t=[];
+    saveToCache();
+    savedtextfield.replaceChildren();
+}
+
+/** Saves all notes to file in format:  Heading0 \n Content0 \n\n Heading1 \n Content1 \n\n... */
+function SaveAll() {
+    let note = "";
+    for (let i = 0; i < h.length; i++) {
+        note += h[i] + "\n" + t[i] + "\n\n";
+    }
+
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(note));
+    element.setAttribute('download', "Notes");
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
 // #endregion
 
 
-// #region ***************NEW TEXT FUNCTIONS**************
+// #region *************** NEW TEXT FUNCTIONS **************
 /** Minise new note tab */
 function Minimise() {
     if (newtextfield.hidden == true) {
@@ -75,7 +102,7 @@ function CopyText() {
 // #endregion
 
 
-// #region ***************ADD TEXT FUNCTIONS**************
+// #region *************** ADD TEXT FUNCTIONS **************
 /** Saves text to list */
 function AddText(dummy = 'fuk u', headings = head.value, contents = text.value, id = len) {
     console.log(headings)
@@ -181,7 +208,7 @@ function Display(i = len) {
 // #endregion
 
 
-// #region ***************SAVED TEXT FUNCTIONS***************
+// #region *************** SAVED TEXT FUNCTIONS ***************
 /** Shows or hides the text content of the note */
 function Reveal(i) {
     var id = "text"+i;
@@ -346,8 +373,7 @@ function Save(i) {
 // #endregion
 
 
-
-// #region ***************CACHE FUNCTIONS***************
+// #region *************** CACHE FUNCTIONS ***************
 /** get cache */
 async function getCache() {
     let heads;
@@ -386,7 +412,7 @@ async function getCache() {
     var T = texts.text;
     var l = T.length;
     len = T.length;
-    for(var i = 0; i<l;i++) {
+    for(let i = 0; i<l;i++) {
         AddText(null, H[i], T[i], i);
     }
 }
@@ -395,6 +421,5 @@ async function saveToCache() {
     await chrome.storage.local.set({ headers: h });
     await chrome.storage.local.set({ text: t });
 }
-
 // #endregion
 
