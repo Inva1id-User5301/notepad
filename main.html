@@ -3,25 +3,37 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="styles.css" type="text/css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <button id="reveal">Hide</button> 
-    <button id="popout" style="margin-left: 206px;">Popout</button>
-
-    <div id="new">
-        <textarea id="newHeading" name="newHeading" rows="1" cols="32" placeholder="Enter new heading"></textarea> <button id="clearHead">Clear</button>
-        <br>
-        <textarea id="newText" name="newText" rows="5" cols="40" placeholder="Enter new text"></textarea>
-        <br>
-        <button id="add">Add</button> <button id="clearText">Clear</button> <button id="copyNew">Copy</button>
+    <img width="400" height="1">
+    <br>
+    
+    <div id="top">
+        <h2 class="inlineWithButton">Add New Note</h2>
+        <button id="reveal">Hide</button> 
+        <button id="popout">Popout</button>
     </div>
 
-    <h2>Saved
-    <button id="DeleteAll" style="margin-left: 20px;">Delete All</button>
-    <button id="SaveAll" style="margin-left: 20px;">Save All</button>
-    </h2>
+
+    <div id="new">
+        <textarea id="newHeading" rows="1" cols="43" placeholder="Enter new heading"></textarea>
+        <button id="clearHead">Clear</button>
+        <br>
+        <textarea id="newText" rows="5" cols="50" placeholder="Enter new text"></textarea>
+        <br>
+        <button id="add">Add</button>
+        <button id="clearText">Clear</button> 
+        <button id="copyNew">Copy</button>
+    </div>
+    <br>
+    
+    <div id="mid">
+        <h2 class="inlineWithButton" style="padding-bottom: 100px;">Saved Notes</h2>
+        <button id="DeleteAll">Delete All</button>
+        <button id="SaveAll">Save All</button>
+    </div>
 
     <div id="savedText"></div>
 

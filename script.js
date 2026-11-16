@@ -7,7 +7,6 @@ document.getElementById("clearText").addEventListener("click", ClearText);
 document.getElementById("copyNew").addEventListener("click", CopyText);
 document.getElementById("DeleteAll").addEventListener("click", DeleteAll);
 document.getElementById("SaveAll").addEventListener("click", SaveAll);
-
 // #endregion
 
 // #region CONSTANTS
@@ -30,13 +29,14 @@ var len = 0;
 getCache();
 // #endregion
 
+
 // #region *************** GENERAL FUNCTIONS**************
 /** popout tab into new window */
 function PopOut() {
     window.close();
     const newWindow = window.open("main.html",
         "Notepad",
-        "width=350,height=400,resizeable=yes,scrollbar=yes"
+        "width=430,height=600,resizeable=yes,scrollbar=yes"
     );
     // require('./popout.js'); // runs popout.js
     // hidepopoutbutton();
@@ -77,10 +77,14 @@ function Minimise() {
     if (newtextfield.hidden == true) {
         newtextfield.hidden = false;
         document.getElementById("reveal").textContent = "Hide"
+        document.getElementById("break").remove();
     }
     else if (newtextfield.hidden == false) {
         newtextfield.hidden = true;
         document.getElementById("reveal").textContent = "Show"
+        var line = document.createElement(`br`);
+        line.id = "break";
+        document.getElementById("top").appendChild(line);
     }
 }
 
@@ -105,7 +109,6 @@ function CopyText() {
 // #region *************** ADD TEXT FUNCTIONS **************
 /** Saves text to list */
 function AddText(dummy = 'fuk u', headings = head.value, contents = text.value, id = len) {
-    console.log(headings)
     if (headings == "") {
         headings = "Note " + len;
     }
@@ -116,14 +119,13 @@ function AddText(dummy = 'fuk u', headings = head.value, contents = text.value, 
     saveToCache();
     ClearHead();
     ClearText();
-    console.log(h)
 }
 
 /** Save and show new text under the 'Saved' list */
 function Display(i = len) {
     // create elements
     const newsaveddiv    = document.createElement(`div`);
-    const newsavedhead   = document.createElement(`h4`);
+    const newsavedhead   = document.createElement(`h3`);
     const newsavedshow   = document.createElement(`button`);
     const newsavedcopy   = document.createElement(`button`);
     const newsavededit   = document.createElement(`button`);
@@ -131,13 +133,14 @@ function Display(i = len) {
     const newsavedsave   = document.createElement(`button`);
     const newsavedchange = document.createElement(`button`);
     const newsavedcancel = document.createElement(`button`);
-    const newsavedtext   = document.createElement(`p`);
+    const newsavedtext   = document.createElement(`pre`);
 
-    // get ids
+    // ids
     var divid   = "saved" + i;
     var headid  = "head" + i;
     var textid  = "text" + i;
-
+    newsaveddiv.id  = divid;
+        // buttons
     var showid   = "show" + i;
     var copyid   = "copy" + i;
     var editid   = "edit" + i;
@@ -150,16 +153,17 @@ function Display(i = len) {
     var j = i
     if (i >= h.length) {j=h.length-1}
     
-    // heading
+    // IDs and content
+        // heading
     newsavedhead.id = headid;
     newsavedhead.textContent = h[j];
 
-    // text
+        // text
     newsavedtext.id = textid;
     newsavedtext.textContent = t[j];
     newsavedtext.hidden = true;
 
-    // buttons
+        // buttons
     newsavedshow.textContent   = "+";
     newsavedcopy.textContent   = "Copy";
     newsavededit.textContent   = "Edit";
@@ -167,7 +171,6 @@ function Display(i = len) {
     newsavedsave.textContent   = "Save";
     newsavedchange.textContent = "Save Changes";
     newsavedcancel.textContent = "Discard Changes";
-
     newsavedshow.id   = showid;
     newsavedcopy.id   = copyid;
     newsavededit.id   = editid;
@@ -176,23 +179,34 @@ function Display(i = len) {
     newsavedchange.id = changeid;
     newsavedcancel.id = cancelid
 
+    // styles
+        // hide edit confirmation buttons
     newsavedchange.hidden = true;
     newsavedcancel.hidden = true;
+        // give margin
+    newsavedshow.style.marginLeft = "5px";
+    newsavedcopy.style.marginLeft = "2px";
+    newsavededit.style.marginLeft = "2px";
+    newsaveddel.style.marginLeft = "2px";
+    newsavedsave.style.marginLeft = "2px";
+    newsavedchange.style.marginLeft = "5px";
+    newsavedcancel.style.marginLeft = "2px";
+        // inline
+    newsavedhead.style.display = "inline";
+        // padding
+    newsaveddiv.style.paddingTop = "7px"
 
-    // add elements
+    // add elements to doc
     newsaveddiv.appendChild(newsavedhead);
-    newsavedhead.appendChild(newsavedshow);
-    newsavedhead.appendChild(newsavedcopy);
-    newsavedhead.appendChild(newsavededit);
-    newsavedhead.appendChild(newsaveddel);
-    newsavedhead.appendChild(newsavedsave);
-    newsavedhead.appendChild(newsavedchange);
-    newsavedhead.appendChild(newsavedcancel);
+    newsaveddiv.appendChild(newsavedshow);
+    newsaveddiv.appendChild(newsavedcopy);
+    newsaveddiv.appendChild(newsavededit);
+    newsaveddiv.appendChild(newsaveddel);
+    newsaveddiv.appendChild(newsavedsave);
+    newsaveddiv.appendChild(newsavedchange);
+    newsaveddiv.appendChild(newsavedcancel);
     newsaveddiv.appendChild(newsavedtext);
 
-
-    // add to doc
-    newsaveddiv.id  = divid;
     savedtextfield.appendChild(newsaveddiv);
 
     // functionality for buttons
@@ -221,7 +235,7 @@ function Reveal(i) {
     }
     else if (content.hidden == false) {
         content.hidden = true;
-        this.b.textContent = "+";
+        b.textContent = "+";
     }
 }
 
@@ -357,14 +371,11 @@ function Save(i) {
     var Tid = "text" + i;
 
     var heading = document.getElementById(Hid).textContent;
-    const headin = heading.replace("CopyEditDelSaveSave ChangesDiscard Changes", "");
-    const headi = headin.slice(0,-1);
-    console.log(headi);
     var content = document.getElementById(Tid).textContent;
 
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', headi);
+    element.setAttribute('download', heading);
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();

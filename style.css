@@ -1,15 +1,42 @@
 /* main style doc */
 
-/* body {
-  background-color: lightblue;
+pre {
+  margin: 0;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  font-size: 11px;
 }
 
-h1 {
-  color: white;
-  text-align: center;
+/* CLASSES */
+.inlineWithButton {
+  display: inline;
 }
 
-p {
-  font-family: verdana;
-  font-size: 20px;
-} */
+.noteButton {
+  margin-left: 5px;
+}
+
+/* ID */
+#mid {
+  padding-bottom: 10px;
+}
+
+#reveal {
+  margin-left: 10px;
+}
+
+#popout {
+  float: right;
+}
+
+#clearHead {
+  float: right;
+}
+
+#DeleteAll {
+  margin-left: 10px;
+}
+
+#SaveAll {
+  margin-left: 10px;
+}
