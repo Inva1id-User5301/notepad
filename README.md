@@ -8,3 +8,5 @@ Go to:
 Enable developer mode
 Click load unpacked
 Select root folder
+
+<!-- For a non-chromium browser, replace chrome.storage.local (and similar instances) with browser.storage.local (for Firefox) or relevant-->
