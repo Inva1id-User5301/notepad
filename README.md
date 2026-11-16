@@ -1,8 +1,8 @@
 # notepad
 Notepad extension
 
-To use, go to:
-chrome://extensions or edge:// extensions
-enable developer mode
-load unpacked
-selected folder.
+To use:
+- Go to: chrome://extensions
+- enable developer mode (top right)
+- load unpacked
+- select folder
