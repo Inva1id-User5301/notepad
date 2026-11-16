@@ -1,11 +1,10 @@
-# notepad
-Notepad extension
+# Notepad
 
 To use:
-| Chrome | Edge |
-|--------|--------|
-|Go to: |
-| chrome://extensions | edge://extensions |
-| enable developer mode (top right)|
-| load unpacked |
-| select folder |
+
+Go to:
+- chrome://extensions     or
+- edge://extensions
+Enable developer mode
+Click load unpacked
+Select root folder
