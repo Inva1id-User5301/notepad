@@ -1,14 +1,3 @@
-// #region BUTTON ATTACHMENTS
-document.getElementById("popout").addEventListener("click", PopOut);
-document.getElementById("reveal").addEventListener("click", Minimise);
-document.getElementById("clearHead").addEventListener("click", ClearHead);
-document.getElementById("add").addEventListener("click", AddText);
-document.getElementById("clearText").addEventListener("click", ClearText);
-document.getElementById("copyNew").addEventListener("click", CopyText);
-document.getElementById("DeleteAll").addEventListener("click", DeleteAll);
-document.getElementById("SaveAll").addEventListener("click", SaveAll);
-// #endregion
-
 // #region CONSTANTS
 // new text field
 const newtextfield = document.getElementById("new"); // div
@@ -19,6 +8,21 @@ const text = document.getElementById("newText"); // text textbox
 const savedtextfield = document.getElementById("savedText");
 // #endregion
 
+
+// #region BUTTON ATTACHMENTS
+document.getElementById("popout").addEventListener("click", PopOut);
+document.getElementById("reveal").addEventListener("click", Minimise);
+document.getElementById("clearHead").addEventListener("click", ClearHead);
+document.getElementById("add").addEventListener("click", AddText);
+document.getElementById("clearText").addEventListener("click", ClearText);
+document.getElementById("copyNew").addEventListener("click", CopyText);
+document.getElementById("DeleteAll").addEventListener("click", DeleteAll);
+document.getElementById("SaveAll").addEventListener("click", SaveAll);
+head.addEventListener("change", LocalSaveChanges)
+text.addEventListener("change", LocalSaveChanges)
+// #endregion
+
+
 // #region DISPLAY SAVED TEXT
 
 // variables
@@ -27,6 +31,7 @@ var t = []; // array of text content
 var len = 0;
 
 getCache();
+CheckOld();
 // #endregion
 
 
@@ -103,6 +108,32 @@ function CopyText() {
     text.select();
     navigator.clipboard.writeText(text.value);
 }
+
+async function LocalSaveChanges() {
+    await chrome.storage.session.set({tempH: head.value, tempT: text.value});
+}
+
+async function CheckOld() {
+    var prevH = await chrome.storage.session.get(["tempH"]);
+    var prevT = await chrome.storage.session.get(["tempT"]);
+    var pH = prevH.tempH;
+    var pT = prevT.tempT;
+    if (pH == undefined || pT == undefined) { return; }
+    else {
+        // THIS DOES WORK?!@?!?!?!NXCUHVOEIWNODFHG0W
+        head.value = pH;
+        text.value = pT;
+
+        const replacementH = head.cloneNode(true);
+        replacementH.value = head.value;
+        head.replaceWith(replacementH);
+
+        const replacementT = text.cloneNode(true);
+        replacementT.value = text.value;
+        text.replaceWith(replacementT);
+    }
+}
+
 // #endregion
 
 
