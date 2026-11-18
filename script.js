@@ -1,3 +1,6 @@
+// delay function. Call with "delay(T);" to create a T ms delay
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // #region CONSTANTS
 // new text field
 const newtextfield = document.getElementById("new"); // div
@@ -31,7 +34,7 @@ var t = []; // array of text content
 var len = 0;
 
 getCache();
-CheckOld();
+RestoreOld();
 // #endregion
 
 
@@ -109,28 +112,22 @@ function CopyText() {
     navigator.clipboard.writeText(text.value);
 }
 
+/** saves changes to session cache upon deselect */
 async function LocalSaveChanges() {
     await chrome.storage.session.set({tempH: head.value, tempT: text.value});
 }
 
-async function CheckOld() {
-    var prevH = await chrome.storage.session.get(["tempH"]);
+/** gets value from session cache upon loading in */
+async function RestoreOld() {
+    await delay(1); // for some reason, if there is no delay, it breaks EVERYTHING
+    var prevH = await chrome.storage.session.get(["tempH"]); // also, putting them in a single item as a list doesn't work either
     var prevT = await chrome.storage.session.get(["tempT"]);
     var pH = prevH.tempH;
     var pT = prevT.tempT;
     if (pH == undefined || pT == undefined) { return; }
     else {
-        // THIS DOES WORK?!@?!?!?!NXCUHVOEIWNODFHG0W
         head.value = pH;
         text.value = pT;
-
-        const replacementH = head.cloneNode(true);
-        replacementH.value = head.value;
-        head.replaceWith(replacementH);
-
-        const replacementT = text.cloneNode(true);
-        replacementT.value = text.value;
-        text.replaceWith(replacementT);
     }
 }
 
