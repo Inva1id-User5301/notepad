@@ -5,7 +5,17 @@ pre {
   padding-top: 3px;
   padding-bottom: 4px;
   font-size: 11px;
+  font-family: monospace;
 }
+
+input {
+  font-family: monospace;
+}
+
+textarea {
+  font-family: monospace;
+}
+
 
 /* CLASSES */
 .inlineWithButton {
@@ -16,6 +26,10 @@ pre {
   margin-left: 5px;
 }
 
+.noteLink {
+  display: inline;
+}
+
 /* ID */
 #mid {
   padding-bottom: 10px;
@@ -23,6 +37,7 @@ pre {
 
 #reveal {
   margin-left: 10px;
+  /* float: inline-start; */
 }
 
 #popout {
@@ -39,4 +54,8 @@ pre {
 
 #SaveAll {
   margin-left: 10px;
+}
+
+#ErrorMsg {
+  color: red;
 }

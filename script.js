@@ -33,10 +33,18 @@ var h = []; // array of headers
 var t = []; // array of text content
 var len = 0;
 
+GetTitle();
 getCache();
 RestoreOld();
 // #endregion
 
+
+document.getElementById('x').addEventListener("click", x)
+async function x() {
+    var t = await chrome.storage.session.set({page: "home"});
+    window.location.href = "home.html";
+
+}
 
 // #region *************** GENERAL FUNCTIONS**************
 /** popout tab into new window */
@@ -51,6 +59,12 @@ function PopOut() {
     newWindow.onload = function() {
         this.document.getElementById("popout").textContent = "Close"
     };
+}
+
+async function GetTitle() {
+    var t = await chrome.storage.session.get(["title"]);
+    var Title = t.title;
+    if (Title != undefined) { document.getElementById("title").innerHTML = Title; }
 }
 
 /** Delete all notes */
@@ -97,12 +111,12 @@ function Minimise() {
 }
 
 /** Clears active heading */
-function ClearHead() {
+async function ClearHead() {
     head.value = "";
 }
 
 /** Clears active text */
-function ClearText() {
+async function ClearText() {
     text.value = "";
 }
 
@@ -124,11 +138,8 @@ async function RestoreOld() {
     var prevT = await chrome.storage.session.get(["tempT"]);
     var pH = prevH.tempH;
     var pT = prevT.tempT;
-    if (pH == undefined || pT == undefined) { return; }
-    else {
-        head.value = pH;
-        text.value = pT;
-    }
+    if (pH != undefined) { head.value = pH; }
+    if (pT != undefined) { text.value = pT; }
 }
 
 // #endregion

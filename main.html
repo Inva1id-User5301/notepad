@@ -7,17 +7,18 @@
 </head>
 
 <body>
-    <img width="400" height="1">
+    <img width="400" height="1"> <!-- used to keep size consistant -->
     <br>
 
     <div id="top">
-        <h2 class="inlineWithButton">Add New Note</h2>
+        <h2 id="title" class="inlineWithButton">Add New Note</h2>
         <button id="reveal">Hide</button> 
         <button id="popout">Popout</button>
+        <button id="x">x</button>
     </div>
     <div id="new">
-        <textarea id="newHeading" rows="1" cols="43" placeholder="Enter new heading"></textarea>
         <button id="clearHead">Clear</button>
+        <input type="text" id="newHeading" size="44" placeholder="Enter new heading" autofocus>
         <br>
         <textarea id="newText" rows="5" cols="50" placeholder="Enter new text"></textarea>
         <br>
