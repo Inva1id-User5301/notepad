@@ -11,7 +11,7 @@ displayList();
 
 
 async function createNote() {
-    var lists = await chrome.storage.sync.get(["list"]);
+    var lists = await chrome.storage.local.get(["list"]);
     var fulllist = lists.list
     if (fulllist == undefined) { fulllist = []; }
     console.log(NewName.value=="")
@@ -28,8 +28,17 @@ async function createNote() {
     if (!fulllist.includes(NewName.value)) {
         console.log(NewName.value, fulllist)
         fulllist.push(NewName.value);
-        await chrome.storage.sync.set({list: fulllist});
+        await chrome.storage.local.set({list: fulllist});
+        await chrome.storage.session.set({
+            title: NewName.value, 
+            page: NewName.value
+        });
+        await chrome.storage.local.set({
+            headers: [], 
+            text: []
+        });
         window.location.href = "main.html";
+        // NewName.value = "";
     }
     else {
         document.getElementById("ErrorMsg").hidden = false;      
@@ -37,12 +46,12 @@ async function createNote() {
 }
 
 async function displayList() {
-    var lists = await chrome.storage.sync.get(["list"]);
+    var lists = await chrome.storage.local.get(["list"]);
     var fulllist = lists.list
+    if (fulllist == undefined) { fulllist = []; }
 
     var lastPage = await chrome.storage.session.get(["page"]);
     var Page = lastPage.page
-    console.log(Page)
     if (Page != "home" && Page != undefined) {
         MovePage(fulllist.indexOf(Page), Page);
     }
@@ -72,7 +81,7 @@ async function displayList() {
         name.style.marginLeft = del.style.marginLeft = "7px";
         name.tabIndex = del.tabIndex= 1;
         name.addEventListener("click", () => Rename())
-        del.addEventListener("click", () => Delete(i, fulllist, fulllist[i]))
+        del.addEventListener("click", () => Delete(i, fulllist[i]))
 
         
 
@@ -87,17 +96,16 @@ function Rename(i) {
     buttonPressed = true;
 }
 
-async function Delete(id, list, item) {
+async function Delete(id, item) {
     buttonPressed = true
-    console.log('del')
-    console.log(id, list, item);
 
-    list.splice(list.indexOf(item), 1);
+    var lists = await chrome.storage.local.get(["list"]);
+    var fulllist = lists.list
+
+    fulllist.splice(fulllist.indexOf(item), 1);
     document.getElementById(id).remove();
 
-    console.log(list)
-
-    await chrome.storage.sync.set({ list: list });
+    await chrome.storage.local.set({ list: fulllist });
 }
 
 async function MovePage(i, name) {
@@ -109,9 +117,10 @@ async function MovePage(i, name) {
     console.log("move")
 
     // console.log(i, name)
-    // console.log(typeof name)
-
-
+    var h = await chrome.storage.local.get(["AllHeads"]);
+    var t = await chrome.storage.local.get(["AllTexts"]);
+    var AllH = h.AllHeads;
+    var Allt = t.AllTexts;
 
     
     await chrome.storage.session.set({
